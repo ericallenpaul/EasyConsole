@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace EasyConsole
 {
@@ -11,12 +8,9 @@ namespace EasyConsole
 
         public bool BreadcrumbHeader { get; private set; }
 
-        protected Page CurrentPage
+        protected Page? CurrentPage
         {
-            get
-            {
-                return (History.Any()) ? History.Peek() : null;
-            }
+            get { return History.Any() ? History.Peek() : null; }
         }
 
         private Dictionary<Type, Page> Pages { get; set; }
@@ -39,7 +33,7 @@ namespace EasyConsole
             {
                 Console.Title = Title;
 
-                CurrentPage.Display();
+                CurrentPage?.Display();
             }
             catch (Exception e)
             {
@@ -57,11 +51,7 @@ namespace EasyConsole
         public void AddPage(Page page)
         {
             Type pageType = page.GetType();
-
-            if (Pages.ContainsKey(pageType))
-                Pages[pageType] = page;
-            else
-                Pages.Add(pageType, page);
+            Pages[pageType] = page;
         }
 
         public void NavigateHome()
@@ -70,22 +60,19 @@ namespace EasyConsole
                 History.Pop();
 
             Console.Clear();
-            CurrentPage.Display();
+            CurrentPage?.Display();
         }
 
-        public T SetPage<T>() where T : Page
+        public T? SetPage<T>() where T : Page
         {
             Type pageType = typeof(T);
 
             if (CurrentPage != null && CurrentPage.GetType() == pageType)
                 return CurrentPage as T;
 
-            // leave the current page
-
             // select the new page
-            Page nextPage;
-            if (!Pages.TryGetValue(pageType, out nextPage))
-                throw new KeyNotFoundException("The given page \"{0}\" was not present in the program".Format(pageType));
+            if (!Pages.TryGetValue(pageType, out Page? nextPage))
+                throw new KeyNotFoundException($"The given page \"{pageType}\" was not present in the program");
 
             // enter the new page
             History.Push(nextPage);
@@ -93,21 +80,21 @@ namespace EasyConsole
             return CurrentPage as T;
         }
 
-        public T NavigateTo<T>() where T : Page
+        public T? NavigateTo<T>() where T : Page
         {
             SetPage<T>();
 
             Console.Clear();
-            CurrentPage.Display();
+            CurrentPage?.Display();
             return CurrentPage as T;
         }
 
-        public Page NavigateBack()
+        public Page? NavigateBack()
         {
             History.Pop();
 
             Console.Clear();
-            CurrentPage.Display();
+            CurrentPage?.Display();
             return CurrentPage;
         }
     }
