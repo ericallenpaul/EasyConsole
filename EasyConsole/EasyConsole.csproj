@@ -5,15 +5,13 @@
     <AssemblyName>EasyConsole</AssemblyName>
 
     <!-- ===== NuGet package identity =====
-         Owned by ericallenpaul on NuGet.org and backed by a Trusted Publisher
-         policy for this repo's publish.yml workflow. -->
-    <PackageId>EasyConsole</PackageId>
+         The original "EasyConsole" ID is owned by splttingatms, so this fork
+         publishes under a handle-namespaced ID owned by ericallenpaul, backed
+         by a Trusted Publisher policy for this repo's publish.yml workflow. -->
+    <PackageId>EricAllenPaul.EasyConsole</PackageId>
 
-    <!-- Default version for local packs; CI overrides this from the release tag.
-         net10.0-only is a breaking change vs the old net4.5.2/netstandard2.0
-         package, so this is a major bump. Must be higher than any version
-         already published under this ID. -->
-    <Version>2.0.0</Version>
+    <!-- Default version for local packs; CI overrides this from the release tag. -->
+    <Version>1.0.0</Version>
 
     <Title>EasyConsole</Title>
     <Description>A library to make it easier to build a simple menu interface for a .NET console application.</Description>

@@ -1,4 +1,4 @@
-# EasyConsole [![NuGet](https://img.shields.io/nuget/v/EasyConsole.svg)](https://www.nuget.org/packages/EasyConsole/)
+# EasyConsole [![NuGet](https://img.shields.io/nuget/v/EricAllenPaul.EasyConsole.svg)](https://www.nuget.org/packages/EricAllenPaul.EasyConsole/)
 EasyConsole is a library to make it easier for developers to build a simple menu interface for a .NET console application. Targets **.NET 10**.
 
 ![Program Demo](https://i.imgur.com/Hlc2QoI.gif)
@@ -10,7 +10,7 @@ EasyConsole is a library to make it easier for developers to build a simple menu
 
 ## Install
 ```sh
-dotnet add package EasyConsole
+dotnet add package EricAllenPaul.EasyConsole
 ```
 
 ## Quick Start
