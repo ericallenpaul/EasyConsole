@@ -1,0 +1,64 @@
+name: Publish to NuGet
+
+# Publishes the package when you create a GitHub Release. The release tag
+# (e.g. "v1.2.3") becomes the package version. You can also run it manually.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Package version to publish (e.g. 1.2.3)"
+        required: true
+
+permissions:
+  contents: read
+  id-token: write   # required for NuGet.org trusted publishing (OIDC)
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history so SourceLink stamps the right commit
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing version $VERSION"
+
+      - name: Pack
+        run: >
+          dotnet pack EasyConsole/EasyConsole.csproj
+          --configuration Release
+          -p:Version=${{ steps.version.outputs.value }}
+          --output ${{ github.workspace }}/artifacts
+
+      # Exchanges the GitHub OIDC token for a short-lived NuGet.org API key.
+      # No long-lived secret needed — configure a Trusted Publisher policy on
+      # NuGet.org (Account > Trusted Publishing) pointing at this repo/workflow.
+      - name: NuGet login (trusted publishing)
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ericallenpaul   # NuGet.org username (must own the package + trusted publisher policy)
+
+      - name: Push package
+        run: >
+          dotnet nuget push "${{ github.workspace }}/artifacts/*.nupkg"
+          --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate

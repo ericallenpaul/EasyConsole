@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Demo/Demo.csproj" />
+  <Project Path="EasyConsole/EasyConsole.csproj" />
+</Solution>

@@ -1,5 +1,3 @@
-﻿using System;
-
 namespace EasyConsole
 {
     public static class Input
@@ -25,7 +23,7 @@ namespace EasyConsole
 
         public static int ReadInt()
         {
-            string input = Console.ReadLine();
+            string? input = Console.ReadLine();
             int value;
 
             while (!int.TryParse(input, out value))
@@ -40,22 +38,29 @@ namespace EasyConsole
         public static string ReadString(string prompt)
         {
             Output.DisplayPrompt(prompt);
-            return Console.ReadLine();
+            return Console.ReadLine() ?? string.Empty;
         }
 
-        public static TEnum ReadEnum<TEnum>(string prompt) where TEnum : struct, IConvertible, IComparable, IFormattable
+        public static ConsoleKeyInfo ReadKey(string prompt)
         {
-            Type type = typeof(TEnum);
+            Output.DisplayPrompt(prompt);
+            return Console.ReadKey();
+        }
 
-            if (!type.IsEnum)
-                throw new ArgumentException("TEnum must be an enumerated type");
+        public static bool ReadKeyYesOrNo(string prompt)
+        {
+            var key = ReadKey($"{prompt} (y/n)").KeyChar;
+            return key == 'y';
+        }
 
+        public static TEnum ReadEnum<TEnum>(string prompt) where TEnum : struct, Enum
+        {
             Output.WriteLine(prompt);
             Menu menu = new Menu();
 
-            TEnum choice = default(TEnum);
-            foreach (var value in Enum.GetValues(type))
-                menu.Add(Enum.GetName(type, value), () => { choice = (TEnum)value; });
+            TEnum choice = default;
+            foreach (var value in Enum.GetValues<TEnum>())
+                menu.Add(value.ToString() ?? string.Empty, () => { choice = value; });
             menu.Display();
 
             return choice;

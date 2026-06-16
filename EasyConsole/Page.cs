@@ -1,6 +1,3 @@
-﻿using System;
-using System.Linq;
-
 namespace EasyConsole
 {
     public abstract class Page
@@ -19,10 +16,7 @@ namespace EasyConsole
         {
             if (Program.History.Count > 1 && Program.BreadcrumbHeader)
             {
-                string breadcrumb = null;
-                foreach (var title in Program.History.Select((page) => page.Title).Reverse())
-                    breadcrumb += title + " > ";
-                breadcrumb = breadcrumb.Remove(breadcrumb.Length - 3);
+                var breadcrumb = string.Join(" > ", Program.History.Select(page => page.Title).Reverse());
                 Console.WriteLine(breadcrumb);
             }
             else
